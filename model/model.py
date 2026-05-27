@@ -23,14 +23,14 @@ class Model:
     def _ricorsione(self, parziale, end, lun):
         # CASO BASE: Abbiamo raggiunto il numero di ARCHI richiesto (lunghezza del cammino)
         # uso len(parziale) -1 poichè lun è il numero di archi, parziale contiene i nodi
-        # e il numero di achi è pari al numero di nodi meno 1
+        # e il numero di archi è pari al numero di nodi meno 1
         if len(parziale) - 1 == lun:
             # Se siamo anche arrivati al nodo finale corretto, valutiamo la soluzione
             if parziale[-1] == end:
                 if self._getScore(parziale) > self._costoBest:
                     self._solBest = copy.deepcopy(parziale)  # Va benissimo anche list(parziale) che è più veloce
                     self._costoBest = self._getScore(parziale)
-            return  # BLOCCA SEMPRE la ricorsione qui, anche se non siamo nel nodo 'end'
+            return  # BLOCCA SEMPRE la ricorsione qui, anche se non siamo nel nodo 'end' perchè abbiamo raggiungto la lunghezza massima (lun)
 
         # RICORDA!!! In questo caso chiede che il cammino attraversi gli archi rispettando i versi,
         # quindi devo usare successors e non neighbors (dove può anche non rispettarli)
@@ -93,5 +93,19 @@ class Model:
         return len(self._graph.nodes), len(self._graph.edges)
 
     def getTopProdotti(self):
+        #listNodesPesata = []
+        # CIOE' PER OGNI NODO DEL GRAFO, CONSIDERO TUTTI GLI ARCHI USCENTI E SOMMO IL PESO
+        # E TUTTI GLI ARCHI ENTRANTI E LO SOTTRAGGO
+        #for n in self._graph.nodes:
+        #   score = 0
+        #   for e in self._graph.out_edges(n, data=True):
+        #       score+=e[2]["weight"]
+        #   for e in self._graph.in_edges(n, data=True):
+        #       score-=e[2]["weight"]
+        # APPENDO ALLA LISTA UNA TUPLA CON IL NODO E IL SUO SCORE (PESO ARCHI USCENTI - PESO ARCHI ENTRANTI)
+        #   listNodesPesata.append((n,score))
+        # ORDINO LA LISTA SULLA BASE DEL SECONDO ELEMENTO DELA TUPLA (LO SCORE)
+        #listNodesPesata.sort(key=lambda x:x[1], reverse=True)
+        #return listNodesPesata[0:5]
         top = sorted(self._graph.nodes, key=lambda x: x.peso_archi_uscenti-x.peso_archi_entranti, reverse=True)
         return top[0:5]

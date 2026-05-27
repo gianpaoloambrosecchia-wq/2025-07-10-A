@@ -21,6 +21,7 @@ class DAO():
         for row in cursor:
             results.append(row["order_date"])
 
+        # Considero prima e ultima data del database
         first = results[0]
         last = results[-1]
 
@@ -119,5 +120,25 @@ class DAO():
         cursor.close()
         conn.close()
         return res
+
+    # Oppure volendo fare tutto direttamente su sql
+    """select t1.product_id, t2.product_id, t1.num_ven as numt1, t2.num_ven as numt2, t1.num_ven+t2.num_ven as peso
+       from (select p.product_id, count(*) as num_ven
+       from products p, order_items oi, orders o
+       where o.order_id = oi.order_id and oi.product_id = p.product_id and
+             o.order_date between %s and %s and p.category_id = %s
+       group by p.product_id) t1, 
+       (select p.product_id, count(*) as num_ven
+       from products p, order_items oi, orders o
+       where o.order_id = oi.order_id and oi.product_id = p.product_id and
+             o.order_date between %s and %s and p.category_id = %s
+       group by p.product_id) t2
+       where t1.product_id <> t2.product_id and t1.num_ven = t2.num_ven
+       """
+
+    # L'ultima riga della query mi permette di considerare due prodotti diversi
+    # con l'arco che va da quello con num vendite maggiore a quello con num vendite
+    # minore (il segno uguale sarà valido in entrambi i versi, poichè l0uguaglianza
+    # sarà verificata sia da A verso B sia da B verso A
 
 

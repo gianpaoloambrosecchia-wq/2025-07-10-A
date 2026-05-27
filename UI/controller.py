@@ -92,6 +92,13 @@ class Controller:
 
         path = self._model._solBest
         score = self._model._costoBest
+        if len(path) == 0:
+            self._view.txt_result.controls.clear()
+            self._view.txt_result.controls.append(
+                ft.Text("Non è stato trovato nessun cammino")
+            )
+            self._view.update_page()
+            return
         self._view.txt_result.controls.clear()
         self._view.txt_result.controls.append(
             ft.Text(f"Segue il cammino con peso massimo tra i nodi {self._choiceProdStart} e {self._choiceProdEnd} con peso {score}")
