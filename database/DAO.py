@@ -79,7 +79,7 @@ class DAO():
 
         cursor = conn.cursor(dictionary=True)
 
-        query = """select p.product_id, count(distinct oi.order_id) as num_vendite
+        query = """select p.product_id, sum(oi.quantity) as num_vendite
                     from products p
                     join order_items oi on p.product_id = oi.product_id 
                     join orders o on oi.order_id = o.order_id 
@@ -89,8 +89,9 @@ class DAO():
         cursor.execute(query, (category_id, date1, date2))
 
         for row in cursor:
-            p = idMapP[row["product_id"]]
-            p.num_vendite = row["num_vendite"]
+            if row["product_id"] in idMapP:
+                p = idMapP[row["product_id"]]
+                p.num_vendite = row["num_vendite"]
 
         cursor.close()
         conn.close()
